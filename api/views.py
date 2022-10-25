@@ -99,17 +99,22 @@ def predict():
         - "prediction" model predicted class as string.
         - "score" model confidence score for the predicted class as float.
     """
-    # To correctly implement this endpoint you should:
     #   1. Check a file was sent and that file is an image
-    #   2. Store the image to disk
-    #   3. Send the file to be processed by the `model` service
-    #      Hint: Use middleware.model_predict() for sending jobs to model
-    #            service using Redis.
-    #   4. Update and return `rpse` dict with the corresponding values
-    # If user sends an invalid request (e.g. no file provided) this endpoint
-    # should return `rpse` dict with default values HTTP 400 Bad Request code
-    # TODO
-    rpse = {"success": False, "prediction": None, "score": None}
+    file = request.files["file"]
+    if file and utils.allowed_file(file.filename):
+      #   2. Store the image to disk
+      file_name = utils.get_file_hash(file)
+      file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
+      #   3. Send the file to be processed by the `model` service
+      raw_prediction = model_predict(file_name)
+      #   4. Update and return `rpse` dict with the corresponding values
+      rpse = {"success": True, "prediction": raw_prediction[0], "score": raw_prediction[1]}
+      return rpse
+    else:
+      # If user sends an invalid request (e.g. no file provided) this endpoint
+      # should return `rpse` dict with default values HTTP 400 Bad Request code
+      rpse = {"success": False, "prediction": "400 Bad Request", "score": "400 Bad Request"}
+      return rpse
 
 
 @router.route("/feedback", methods=["GET", "POST"])
@@ -137,6 +142,6 @@ def feedback():
 
     # Store the reported data to a file on the corresponding path
     # already provided in settings.py module
-    # TODO
-
+    with open(settings.FEEDBACK_FILEPATH, "w") as f:
+      f.write(report)
     return render_template("index.html")
