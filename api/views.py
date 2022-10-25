@@ -108,7 +108,7 @@ def predict():
       #   3. Send the file to be processed by the `model` service
       raw_prediction = model_predict(file_name)
       #   4. Update and return `rpse` dict with the corresponding values
-      rpse = {"success": True, "prediction": raw_prediction[0], "score": raw_prediction[1]}
+      rpse = {"success": True, "prediction": raw_prediction[0], "score": round(float(raw_prediction[1]), 4)}
       return rpse
     else:
       # If user sends an invalid request (e.g. no file provided) this endpoint
