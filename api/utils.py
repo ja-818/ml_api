@@ -40,8 +40,7 @@ def get_file_hash(file):
     str
         New filename based in md5 file hash.
     """
-    m = hashlib.md5()
-    m.update(os.path.basename(file.filename))
+    m = hashlib.md5(os.path.basename(file.filename).encode('utf-8'))
     return m.hexdigest()
 
     # Current implementation will return the original file name.
