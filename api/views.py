@@ -47,11 +47,11 @@ def index():
             #   1. Get an unique file name using utils.get_file_hash() function
             file_name = utils.get_file_hash(file)
             #   2. Store the image to disk using the new name
-            file.save(settings.UPLOAD_FOLDER, file_name)
+            file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
             #   3. Send the file to be processed by the `model` service
             #      Hint: Use middleware.model_predict() for sending jobs to model
             #            service using Redis.
-            raw_prediction = middleware.model_predict(file_name)
+            raw_prediction = model_predict(file_name)
             #   4. Update `context` dict with the corresponding values
             # TODO
             context = {
