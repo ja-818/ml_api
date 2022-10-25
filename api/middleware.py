@@ -50,7 +50,7 @@ def model_predict(image_name):
 
     # Send the job to the model service using Redis
     # Hint: Using Redis `lpush()` function should be enough to accomplish this.
-    db.lpush(settings.REDIS_QUEUE, job_data)
+    db.lpush(settings.REDIS_QUEUE, json.dumps(job_data))
 
     # Loop until we received the response from our ML model
     while True:
