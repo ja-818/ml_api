@@ -35,8 +35,7 @@ def model_predict(image_name):
     # Assign an unique ID for this job and add it to the queue.
     # We need to assing this ID because we must be able to keep track
     # of this particular job across all the services
-    # TODO
-    job_id = None
+    job_id = str(uuid4())
 
     # Create a dict with the job data we will send through Redis having the
     # following shape:
@@ -44,23 +43,29 @@ def model_predict(image_name):
     #    "id": str,
     #    "image_name": str,
     # }
-    # TODO
-    job_data = None
+    job_data = {
+      "id": job_id,
+      "image_name": image_name,
+    }
 
     # Send the job to the model service using Redis
     # Hint: Using Redis `lpush()` function should be enough to accomplish this.
-    # TODO
+    db.lpush(settings.REDIS_QUEUE, job_data)
 
     # Loop until we received the response from our ML model
     while True:
-        # Attempt to get model predictions using job_id
-        # Hint: Investigate how can we get a value using a key from Redis
-        # TODO
-        output = None
-
-        # Don't forget to delete the job from Redis after we get the results!
-        # Then exit the loop
-        # TODO
+        try:
+          # Attempt to get model predictions using job_id
+          output = json.loads(db.get(job_id))
+          # Assign prediction to variables
+          prediction = output["prediction"]
+          score = output["score"]
+          # Don't forget to delete the job from Redis after we get the results!
+          db.delete(job_id)
+          # Then exit the loop
+          break
+        except:
+          pass        
 
         # Sleep some time waiting for model results
         time.sleep(settings.API_SLEEP)
