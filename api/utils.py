@@ -42,6 +42,3 @@ def get_file_hash(file):
     """
     m = hashlib.md5(os.path.basename(file.filename).encode('utf-8'))
     return m.hexdigest()
-
-    # Current implementation will return the original file name.
-    return os.path.basename(file.filename)

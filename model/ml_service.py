@@ -40,14 +40,19 @@ def predict(image_name):
     """
     class_name = None
     pred_probability = None
-    # TODO
+    
+    # Load image
     img = image.load_img(f"./uploads/{image_name}", target_size=(224, 224))
+    # Turn image into array
     x = image.img_to_array(img)
+    # Add dimension for processing
     x_batch = np.expand_dims(x, axis=0)
+    # Preprocess and prediction
     x_batch = preprocess_input(x_batch)
     preds = model.predict(x_batch)
+    # Decode prediction
     raw_prediction = decode_predictions(preds, top=1)
-    print(raw_prediction)
+    # Store prediction results
     class_name = raw_prediction[0][0][1]
     pred_probability = raw_prediction[0][0][2]
 
@@ -66,29 +71,24 @@ def classify_process():
     received, then, run our ML model to get predictions.
     """
     while True:
-        # Inside this loop you should add the code to:
         #   1. Take a new job from Redis
         queue_name, job_data = db.brpop(settings.REDIS_QUEUE)
+        
         #   2. Run your ML model on the given data
         job_data = json.loads(job_data)
         model_prediction = predict(job_data["image_name"])
+        
         #   3. Store model prediction in a dict with the following shape:
-        #      {
-        #         "prediction": str,
-        #         "score": float,
-        #      }
         prediction = {
           "prediction": model_prediction[0],
           "score": str(model_prediction[1])
         }
+        
         #   4. Store the results on Redis using the original job ID as the key
         #      so the API can match the results it gets to the original job
         #      sent
         prediction = json.dumps(prediction)
         db.set(job_data["id"], prediction)
-        # Hint: You should be able to successfully implement the communication
-        #       code with Redis making use of functions `brpop()` and `set()`.
-        # TODO
 
         # Don't forget to sleep for a bit at the end
         time.sleep(settings.SERVER_SLEEP)

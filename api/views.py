@@ -42,26 +42,24 @@ def index():
 
         # File received and it's an image, we must show it and get predictions
         if file and utils.allowed_file(file.filename):
-            # In order to correctly display the image in the UI and get model
-            # predictions you should implement the following:
             #   1. Get an unique file name using utils.get_file_hash() function
             file_name = utils.get_file_hash(file)
+            
             #   2. Store the image to disk using the new name
             file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
+            
             #   3. Send the file to be processed by the `model` service
-            #      Hint: Use middleware.model_predict() for sending jobs to model
-            #            service using Redis.
             raw_prediction = model_predict(file_name)
+            
             #   4. Update `context` dict with the corresponding values
-            # TODO
             context = {
                 "prediction": raw_prediction[0],
                 "score": raw_prediction[1],
                 "filename": file_name,
             }
-            # Update `render_template()` parameters as needed
-            # TODO
+
             return render_template("index.html", filename=file_name, context=context)
+          
         # File received and but it isn't an image
         else:
             flash("Allowed image types are -> png, jpg, jpeg, gif")
