@@ -63,6 +63,7 @@ def classify_process():
         #   1. Take a new job from Redis
         queue_name, job_data = db.brpop(settings.REDIS_QUEUE)
         #   2. Run your ML model on the given data
+        job_data = json.loads(job_data)
         raw_prediction = predict(job_data["image_name"])
         #   3. Store model prediction in a dict with the following shape:
         #      {
@@ -76,7 +77,7 @@ def classify_process():
         #   4. Store the results on Redis using the original job ID as the key
         #      so the API can match the results it gets to the original job
         #      sent
-        db.set(job_data["id"], prediction)
+        db.set(job_data["id"], json.dumps(prediction))
         # Hint: You should be able to successfully implement the communication
         #       code with Redis making use of functions `brpop()` and `set()`.
         # TODO
