@@ -5,10 +5,12 @@ from uuid import uuid4
 import redis
 import settings
 
-# TODO
 # Connect to Redis and assign to variable `db``
 # Make use of settings.py module to get Redis settings like host, port, etc.
-db = None
+db = redis.Redis(
+  host = settings.REDIS_IP,
+  port = settings.REDIS_PORT,
+  db = settings.REDIS_DB_ID)
 
 
 def model_predict(image_name):
