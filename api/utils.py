@@ -18,11 +18,7 @@ def allowed_file(filename):
     bool
         True if the file is an image, False otherwise.
     """
-    if filename.split(".")[1] in ["png", "jpg", "jpeg", "gif"]:
-      return True
-    else:
-      return False
-
+    return filename.lower().endswith(('.png', '.jpg', '.jpeg', ".gif"))
 
 def get_file_hash(file):
     """
