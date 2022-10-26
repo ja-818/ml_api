@@ -46,6 +46,7 @@ def index():
             file_name = utils.get_file_hash(file)
             
             #   2. Store the image to disk using the new name
+            file.stream.seek(0)
             file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
             
             #   3. Send the file to be processed by the `model` service
@@ -104,6 +105,7 @@ def predict():
     if file and utils.allowed_file(file.filename):
       #   2. Store the image to disk
       file_name = utils.get_file_hash(file)
+      file.stream.seek(0)
       file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
       #   3. Send the file to be processed by the `model` service
       raw_prediction = model_predict(file_name)
