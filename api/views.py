@@ -10,6 +10,7 @@ from flask import (
     render_template,
     request,
     url_for,
+    make_response,
 )
 from middleware import model_predict
 
@@ -100,8 +101,20 @@ def predict():
         - "prediction" model predicted class as string.
         - "score" model confidence score for the predicted class as float.
     """
+    rpse = {"success": False, "prediction": None, "score": None}
     #   1. Check a file was sent and that file is an image
+    # No file received
+    if "file" not in request.files:
+        flash("No file part")
+        return make_response(jsonify(rpse), 400)
+
+    # File received but no filename is provided, show basic UI
     file = request.files["file"]
+    if file.filename == "":
+        flash("No image selected for uploading")
+        return make_response(jsonify(rpse), 400)
+    
+    # File recieved and is of the proper type
     if file and utils.allowed_file(file.filename):
       #   2. Store the image to disk
       file_name = utils.get_file_hash(file)
@@ -112,11 +125,9 @@ def predict():
       #   4. Update and return `rpse` dict with the corresponding values
       rpse = {"success": True, "prediction": raw_prediction[0], "score": round(float(raw_prediction[1]), 4)}
       return rpse
-    else:
       # If user sends an invalid request (e.g. no file provided) this endpoint
       # should return `rpse` dict with default values HTTP 400 Bad Request code
-      rpse = {"success": False, "prediction": "400 Bad Request", "score": "400 Bad Request"}
-      return rpse
+    return make_response(jsonify(rpse), 400)
 
 
 @router.route("/feedback", methods=["GET", "POST"])
