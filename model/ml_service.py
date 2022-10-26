@@ -42,7 +42,7 @@ def predict(image_name):
     pred_probability = None
     
     # Load image
-    img = image.load_img(f"./uploads/{image_name}", target_size=(224, 224))
+    img = image.load_img(os.path.join(settings.UPLOAD_FOLDER, image_name), target_size=(224, 224))
     # Turn image into array
     x = image.img_to_array(img)
     # Add dimension for processing
@@ -54,7 +54,7 @@ def predict(image_name):
     raw_prediction = decode_predictions(preds, top=1)
     # Store prediction results
     class_name = raw_prediction[0][0][1]
-    pred_probability = raw_prediction[0][0][2]
+    pred_probability = round(raw_prediction[0][0][2], 4)
 
     return class_name, pred_probability
 
