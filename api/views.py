@@ -46,7 +46,6 @@ def index():
             #   1. Get an unique file name using utils.get_file_hash() function
             file_name = utils.get_file_hash(file)
             #   2. Store the image to disk using the new name
-            file.stream.seek(0)
             file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
             
             #   3. Send the file to be processed by the `model` service
@@ -117,15 +116,14 @@ def predict():
     if file and utils.allowed_file(file.filename):
       #   2. Store the image to disk
       file_name = utils.get_file_hash(file)
-      file.stream.seek(0)
       file.save(os.path.join(settings.UPLOAD_FOLDER, file_name))
       #   3. Send the file to be processed by the `model` service
       raw_prediction = model_predict(file_name)
       #   4. Update and return `rpse` dict with the corresponding values
       rpse = {"success": True, "prediction": raw_prediction[0], "score": float(raw_prediction[1])}
       return rpse
-      # If user sends an invalid request (e.g. no file provided) this endpoint
-      # should return `rpse` dict with default values HTTP 400 Bad Request code
+    # If user sends an invalid request (e.g. no file provided) this endpoint
+    # should return `rpse` dict with default values HTTP 400 Bad Request code
     return make_response(jsonify(rpse), 400)
 
 
@@ -158,9 +156,6 @@ def feedback():
         return render_template("index.html")
       report = request.form.get("report")
       # Store the reported data to a file on the corresponding path
-      # already provided in settings.py module
       with open(settings.FEEDBACK_FILEPATH, "w") as f:
         f.write(report)
       return render_template("index.html")
-    
-    

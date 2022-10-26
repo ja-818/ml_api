@@ -1,7 +1,6 @@
 import hashlib
 import os
 
-
 def allowed_file(filename):
     """
     Checks if the format for the file received is acceptable. For this
@@ -36,8 +35,15 @@ def get_file_hash(file):
     str
         New filename based in md5 file hash.
     """
-    # m = hashlib.md5(os.path.basename(file.filename).encode('utf-8'))
+    # get unique hash for the file and digest it
     hash = hashlib.md5(file.read()).hexdigest()
-    extension = os.path.basename(file.filename).split(".")[1]
-    filename = f"{hash}.{extension}"
-    return filename
+    # return reading pointer to the first position
+    file.seek(0)
+    
+    # Loop to get the extension of the image
+    ext = None
+    for i in ('.png', '.jpg', '.jpeg', ".gif"):
+      if os.path.basename(file.filename).endswith(i):
+        ext = i
+    
+    return hash + ext
