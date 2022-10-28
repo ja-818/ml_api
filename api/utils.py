@@ -36,14 +36,14 @@ def get_file_hash(file):
         New filename based in md5 file hash.
     """
     # get unique hash for the file and digest it
-    hash = hashlib.md5(file.read()).hexdigest()
+    new_filename = hashlib.md5(file.read()).hexdigest()
     # return reading pointer to the first position
     file.seek(0)
     
     # Loop to get the extension of the image
-    ext = None
-    for i in ('.png', '.jpg', '.jpeg', ".gif"):
-      if os.path.basename(file.filename).endswith(i):
-        ext = i
+    for ext in ('.png', '.jpg', '.jpeg', ".gif"):
+      if os.path.basename(file.filename).endswith(ext):
+        new_filename += ext
+        break
     
-    return hash + ext
+    return new_filename
