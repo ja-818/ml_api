@@ -156,6 +156,6 @@ def feedback():
         return render_template("index.html")
       report = request.form.get("report")
       # Store the reported data to a file on the corresponding path
-      with open(settings.FEEDBACK_FILEPATH, "w") as f:
-        f.write(report)
+      with open(settings.FEEDBACK_FILEPATH, "a") as f:
+        f.write(report + "\n")
       return render_template("index.html")
