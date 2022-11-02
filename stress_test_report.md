@@ -57,4 +57,4 @@ Nonetheless, the service works better with 5 instances of the service model than
 ## Final conclusions
 1. With 1 model service, the api runs without failures with a max of 650 users and 6.6 RPS
 2. With 5 model services, the api runs without failures with a max of 675 users and 11.6 RPS
-3. Increasing the number of model services not only increases the max number of users and RPS before failure, but also decreases the number of 
+3. Increasing the number of model services not only increases the max number of users and RPS before failure, but also decreases the number of failures as user and RPS increases.
